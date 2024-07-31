@@ -8,12 +8,15 @@ use App\Http\Resources\TaskCollection;
 use App\Http\Resources\TaskResource;
 use App\Models\Task;
 use Illuminate\Http\Response;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class TaskController extends Controller
 {
     public function index(): TaskCollection
     {
-        return new TaskCollection(Task::query()->paginate(10));
+        $tasks = QueryBuilder::for(Task::class)->allowedFilters('is_done')->paginate();
+
+        return new TaskCollection($tasks);
     }
 
     public function show(Task $task): TaskResource
