@@ -6,22 +6,16 @@ use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Auth;
 
-class Task extends Model
+class Project extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'project_id',
         'title',
-        'is_done',
-    ];
-
-    protected $casts = [
-        'is_done' => 'boolean',
-        'created_at' => 'datetime:Y-m-d H:i:s',
-        'updated_at' => 'datetime:Y-m-d H:i:s',
     ];
 
     protected static function booted(): void
@@ -31,13 +25,18 @@ class Task extends Model
         });
     }
 
+    public function tasks(): HasMany
+    {
+        return $this->hasMany(Task::class);
+    }
+
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'creator_id');
     }
 
-    public function project(): BelongsTo
+    public function members(): BelongsToMany
     {
-        return $this->belongsTo(Project::class);
+        return $this->belongsToMany(User::class, Member::class);
     }
 }
