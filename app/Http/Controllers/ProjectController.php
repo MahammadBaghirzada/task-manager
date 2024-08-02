@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateProjectRequest;
 use App\Http\Resources\ProjectCollection;
 use App\Http\Resources\ProjectResource;
 use App\Models\Project;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -42,5 +43,12 @@ class ProjectController extends Controller
         $project->update($validated);
 
         return new ProjectResource($project);
+    }
+
+    public function destroy(Project $project): Response
+    {
+        $project->delete();
+
+        return response()->noContent();
     }
 }

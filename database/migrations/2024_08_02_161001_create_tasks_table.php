@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
             $table->foreignId('creator_id')->constrained('users');
-            $table->foreignId('project_id')->nullable()->constrained();
+            $table->foreignId('project_id')->nullable()->constrained()->cascadeOnDelete();
             $table->string('title');
             $table->boolean('is_done')->default(false);
             $table->timestamps();
