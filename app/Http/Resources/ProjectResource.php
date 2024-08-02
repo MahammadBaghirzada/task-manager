@@ -19,6 +19,7 @@ class ProjectResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'tasks' => TaskResource::collection($this->whenLoaded('tasks')),
+            'members' => UserResource::collection($this->whenLoaded('members')),
             'created_at' => Carbon::parse($this->created_at)->format('Y-m-d H:i:s'),
             'updated_at' => Carbon::parse($this->updated_at)->format('Y-m-d H:i:s'),
         ];
