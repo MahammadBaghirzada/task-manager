@@ -18,6 +18,13 @@ class Project extends Model
         'title',
     ];
 
+    protected static function booted(): void
+    {
+        static::addGlobalScope('member', function (Builder $builder) {
+            $builder->whereRelation('members', 'user_id', Auth::id());
+        });
+    }
+
     public function tasks(): HasMany
     {
         return $this->hasMany(Task::class);
