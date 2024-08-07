@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -48,6 +49,15 @@ class Task extends Model
     public function scopeDueBetween(Builder $query, string $fromDate, string $toDate)
     {
         $query->whereBetween('due_at', [$fromDate, $toDate]);
+    }
+
+    public function scopeDue(Builder $query, string $filter)
+    {
+        if ($filter === 'today') {
+            $query->whereDate('due_at', Carbon::today());
+        } elseif ($filter === 'past') {
+            $query->whereDate('due_at', '<', Carbon::today());
+        }
     }
 
     public function creator(): BelongsTo
