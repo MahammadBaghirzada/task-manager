@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCommentRequest;
+use App\Http\Resources\CommentCollection;
 use App\Http\Resources\CommentResource;
 use App\Models\Project;
 use App\Models\Task;
@@ -20,6 +21,13 @@ class CommentController extends Controller
         Route::bind('project', function ($value) {
             return Project::query()->findOrFail($value);
         });
+    }
+
+    public function index(Project|Task $model): CommentCollection
+    {
+        $comments = $model->comments()->orderByDesc('created_at')->paginate();
+
+        return new CommentCollection($comments);
     }
 
     public function store(StoreCommentRequest $request, Project|Task $model): CommentResource
