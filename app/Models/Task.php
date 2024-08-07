@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -17,6 +18,8 @@ class Task extends Model
         'project_id',
         'title',
         'is_done',
+        'scheduled_at',
+        'due_at',
     ];
 
     protected $casts = [
@@ -28,9 +31,33 @@ class Task extends Model
     protected static function booted(): void
     {
         static::addGlobalScope('member', function (Builder $builder) {
-            $builder->where('creator_id', Auth::id())
-                ->orWhere('project_id', Auth::user()->memberships->pluck('id'));
+            $userId = Auth::id();
+            $membershipIds = Auth::user()->memberships()->pluck('id')->toArray();
+
+            $builder->where(function ($query) use ($userId, $membershipIds) {
+                $query->where('creator_id', $userId)
+                    ->orWhereIn('project_id', $membershipIds);
+            });
         });
+    }
+
+    public function scopeScheduledBetween(Builder $query, string $fromDate, string $toDate)
+    {
+        $query->whereBetween('scheduled_at', [$fromDate, $toDate]);
+    }
+
+    public function scopeDueBetween(Builder $query, string $fromDate, string $toDate)
+    {
+        $query->whereBetween('due_at', [$fromDate, $toDate]);
+    }
+
+    public function scopeDue(Builder $query, string $filter)
+    {
+        if ($filter === 'today') {
+            $query->whereDate('due_at', Carbon::today());
+        } elseif ($filter === 'past') {
+            $query->whereDate('due_at', '<', Carbon::today());
+        }
     }
 
     public function creator(): BelongsTo

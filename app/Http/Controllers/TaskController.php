@@ -9,6 +9,7 @@ use App\Http\Resources\TaskResource;
 use App\Models\Task;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class TaskController extends Controller
@@ -21,7 +22,14 @@ class TaskController extends Controller
     public function index(): TaskCollection
     {
         $tasks = QueryBuilder::for(Task::class)
-            ->allowedFilters('is_done')
+            ->allowedFilters([
+                'is_done',
+                'scheduled_at',
+                'due_at',
+                AllowedFilter::scope('scheduled_between'),
+                AllowedFilter::scope('due_between'),
+                AllowedFilter::scope('due', null, 'past,today'),
+            ])
             ->defaultSort('-created_at')
             ->allowedSorts(['title', 'is_done', 'created_at'])
             ->paginate(10);
