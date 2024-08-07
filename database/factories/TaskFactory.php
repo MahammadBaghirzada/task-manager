@@ -12,7 +12,7 @@ class TaskFactory extends Factory
     {
         return [
             'creator_id' => User::query()->inRandomOrder()->first()->id,
-            'project_id' => Project::query()->inRandomOrder()->first()->id,
+            'project_id' => random_int(1, 20),
             'title' => fake()->sentence(),
             'is_done' => fake()->boolean(),
         ];
