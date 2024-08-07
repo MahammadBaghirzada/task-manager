@@ -30,9 +30,24 @@ class Task extends Model
     protected static function booted(): void
     {
         static::addGlobalScope('member', function (Builder $builder) {
-            $builder->where('creator_id', Auth::id())
-                ->orWhere('project_id', Auth::user()->memberships->pluck('id'));
+            $userId = Auth::id();
+            $membershipIds = Auth::user()->memberships()->pluck('id')->toArray();
+
+            $builder->where(function ($query) use ($userId, $membershipIds) {
+                $query->where('creator_id', $userId)
+                    ->orWhereIn('project_id', $membershipIds);
+            });
         });
+    }
+
+    public function scopeScheduledBetween(Builder $query, string $fromDate, string $toDate)
+    {
+        $query->whereBetween('scheduled_at', [$fromDate, $toDate]);
+    }
+
+    public function scopeDueBetween(Builder $query, string $fromDate, string $toDate)
+    {
+        $query->whereBetween('due_at', [$fromDate, $toDate]);
     }
 
     public function creator(): BelongsTo
