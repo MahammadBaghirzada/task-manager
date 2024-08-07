@@ -21,6 +21,8 @@ class StoreTaskRequest extends FormRequest
                 'nullable',
                 Rule::in(Auth::user()->memberships()->pluck('id')),
             ],
+            'scheduled_at' => ['date', 'nullable'],
+            'due_at' => ['date', 'nullable'],
         ];
     }
 }

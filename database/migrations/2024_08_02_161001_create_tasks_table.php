@@ -17,6 +17,8 @@ return new class extends Migration
             $table->foreignId('project_id')->nullable()->constrained()->nullOnDelete();
             $table->string('title');
             $table->boolean('is_done')->default(false);
+            $table->date('scheduled_at')->nullable();
+            $table->date('due_at')->nullable();
             $table->timestamps();
         });
     }

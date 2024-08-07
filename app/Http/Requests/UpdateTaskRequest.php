@@ -22,6 +22,8 @@ class UpdateTaskRequest extends FormRequest
                 'nullable',
                 Rule::in(Auth::user()->memberships()->pluck('id'))
             ],
+            'scheduled_at' => ['sometimes', 'date', 'nullable'],
+            'due_at' => ['sometimes', 'date', 'nullable'],
         ];
     }
 }
